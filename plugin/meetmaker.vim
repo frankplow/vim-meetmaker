@@ -9,15 +9,52 @@ if exists("g:loaded_meetmaker")
 endif
 let g:loaded_meetmaker = 1
 
+function! s:MakeMakeprg() abort
+  return 'make'
+endfunction
+
+function! s:CMakeMakeprg() abort
+  return 'cmake --build build'
+endfunction
+
+function! s:RakeMakeprg() abort
+  return 'rake'
+endfunction
+
+function! s:GradleMakeprg() abort
+  return './gradlew build'
+endfunction
+
+function! s:AntMakeprg() abort
+  return 'ant compile jar'
+endfunction
+
+function! s:MavenMakeprg() abort
+  return 'mvn package'
+endfunction
+
+" @TODO: can bazel set default targets?
+function! s:BazelMakeprg() abort
+  return 'bazel build'
+endfunction
+
 function! s:DetectMakeprg() abort
   if filereadable('Makefile')
-    return 'make'
+    return s:MakeMakeprg()
   elseif filereadable('CMakeLists.txt')
-    " @TODO: also determine build dir
-    return 'cmake --build build'
+    return s:CMakeMakeprg()
   elseif filereadable('rakefile') || filereadable('Rakefile')
-    return 'rake'
+    return s:RakeMakeprg()
+  elseif filereadable('settings.gradle')
+    return s:GradleMakeprg()
+  elseif filereadable('build.xml')
+    return s:AntMakeprg()
+  elseif filereadable('pom.xml')
+    return s:MavenMakeprg()
+  elseif filereadable('WORKSPACE')
+    return s:BazelMakeprg()
   endif
+
   return ''
 endfunction
 
@@ -32,7 +69,7 @@ endfunction
 
 augroup MeetMaker
   autocmd BufNewFile,BufReadPost,BufFilePost * nested
-      \ if get(b:, 'meetmaker_automatic', get(g:, 'sleuth_automatic', 1))
+      \ if get(b:, 'meetmaker_automatic', get(g:, 'meetmaker_automatic', 1))
       \ | silent call s:Init() | endif
 augroup END
 
