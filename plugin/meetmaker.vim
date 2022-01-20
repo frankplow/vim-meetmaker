@@ -68,7 +68,7 @@ function! s:Init() abort
 endfunction
 
 augroup MeetMaker
-  autocmd BufNewFile,BufReadPost,BufFilePost * nested
+  autocmd DirChanged,VimEnter * nested
       \ if get(b:, 'meetmaker_automatic', get(g:, 'meetmaker_automatic', 1))
       \ | silent call s:Init() | endif
 augroup END
