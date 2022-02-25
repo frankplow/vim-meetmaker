@@ -63,8 +63,10 @@ function! s:Init() abort
     return
   endif
 
-  let detected_makeprg = s:DetectMakeprg()
-  let &makeprg = detected_makeprg
+  let l:detected_makeprg = s:DetectMakeprg()
+  if l:detected_makeprg != ""
+    let &makeprg = l:detected_makeprg
+  endif
 endfunction
 
 augroup MeetMaker
